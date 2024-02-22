@@ -9,8 +9,6 @@ const MAX_MOVIES_TO_DISPLAY = 200;
 
 let sliceMovie = movies.slice(0, MAX_MOVIES_TO_DISPLAY);
 
-console.log(sliceMovie);
-
 let getHoursAndMin = (data) => {
   const hours = Math.floor(data / 60);
   const min = data % 60;
@@ -151,25 +149,3 @@ function openModal(movie) {
   elModalSummary.textContent = movie.summary.substring(0, 300);
   elMovieModalLink.href = `https://www.youtube-nocookie.com/embed/${movie.ytid}`;
 }
-
-// let newMoviesMapped = movies.map((movie) => {
-//   return {
-//     title: movie.Title,
-//     fulltitle: movie.fulltitle,
-//     movie_year: movie.movie_year,
-//     categories: movie.Categories.split("|"),
-//     summary: movie.summary,
-//     image_urL: `http://i3.ytimg.com/vi/${movie.ytid}/mqdefault.jpg`,
-//     imdb_id: movie.imdb_id,
-//     imdb_rating: movie.imdb_rating,
-//     runtime: movie.runtime,
-//     language: movie.language,
-//     ytid: movie.ytid,
-//     movie_frame: `https://www.youtube-nocookie.com/embed/${movie.ytid}`,
-//     imdb_link: `https://www.youtube-nocookie.com/embed/${movie.imdb_id}`,
-//   };
-// });
-
-// console.log(newMoviesMapped);
-
-// console.log(movies);
