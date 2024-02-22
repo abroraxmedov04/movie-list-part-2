@@ -17,30 +17,20 @@ let getHoursAndMin = (data) => {
 
 let renderMovies = (arr, node) => {
   arr.forEach((movie) => {
-    const {
-      ytid,
-      Title,
-      imdb_rating,
-      movie_year,
-      runtime,
-      Categories,
-      imdb_id,
-    } = movie;
     const cloneTemplate = elTemplateMovie.cloneNode(true);
-
-    cloneTemplate.querySelector(
-      ".js-movie-image"
-    ).src = `http://i3.ytimg.com/vi/${ytid}/mqdefault.jpg`;
+    cloneTemplate.querySelector(".js-movie-image").src = movie.image_url;
     cloneTemplate.querySelector(".js-movie-name").textContent = String(
-      Title
+      movie.title
     ).substring(0, 15);
-    cloneTemplate.querySelector(".js-movie-rating").textContent = imdb_rating;
-    cloneTemplate.querySelector(".js-movie-year").textContent = movie_year;
+    cloneTemplate.querySelector(".js-movie-rating").textContent =
+      movie.imdb_rating;
+    cloneTemplate.querySelector(".js-movie-year").textContent =
+      movie.movie_year;
     cloneTemplate.querySelector(".js-movie-watch-time").textContent =
-      getHoursAndMin(runtime);
+      getHoursAndMin(movie.runtime);
     cloneTemplate.querySelector(".js-movie-genres").textContent =
-      Categories.split("|").slice(0, 3).join(", ");
-    cloneTemplate.querySelector(".js-modal-btn").dataset.imdbId = imdb_id;
+      movie.categories.join(", ");
+    cloneTemplate.querySelector(".js-modal-btn").dataset.imdbId = movie.imdb_id;
 
     mainFragment.appendChild(cloneTemplate);
   });
@@ -59,7 +49,7 @@ let searchedMovie = (evt) => {
   elCardList.innerHTML = "";
   const inputValue = elInput.value.toLowerCase().trim();
   const matchingMovies = sliceMovie.filter((movie) =>
-    String(movie.Title).toLowerCase().includes(inputValue)
+    String(movie.title).toLowerCase().includes(inputValue)
   );
   renderMovies(matchingMovies, elCardList);
 };
@@ -70,7 +60,7 @@ elFormSearch.addEventListener("submit", searchedMovie);
 const handleFilterCategories = (arr) => {
   let result = [];
   for (const movie of arr) {
-    const categories = movie.Categories.split("|");
+    const categories = movie.categories;
     for (const category of categories) {
       if (!result.includes(category.trim())) {
         result.push(category.trim());
@@ -103,10 +93,12 @@ const elSelectOptionInput = document.querySelector(".js-select-option-input");
 const filterByCategory = (evt) => {
   evt.preventDefault();
   elCardList.innerHTML = "";
-  const selectedCategory = elSelectOptionInput.value.trim();
+  const selectedCategory = elSelectOptionInput.value.trim().toLowerCase();
   if (selectedCategory !== "all") {
     const moviesInCategory = sliceMovie.filter((movie) =>
-      movie.Categories.toLowerCase().includes(selectedCategory.toLowerCase())
+      movie.categories
+        .map((category) => category.toLowerCase())
+        .includes(selectedCategory)
     );
     renderMovies(moviesInCategory, elCardList);
   }
@@ -141,11 +133,30 @@ function openModal(movie) {
     elModal.classList.add("hidden");
   });
 
-  elframe.src = `https://www.youtube-nocookie.com/embed/${movie.ytid}`;
-  elModalTitle.textContent = movie.fulltitle;
+  elframe.src = movie.movie_frame;
+  elModalTitle.textContent = movie.full_title;
   elMovierating.textContent = movie.imdb_rating;
   elMovieYear.textContent = movie.movie_year;
   elMovieRuntime.textContent = getHoursAndMin(movie.runtime);
   elModalSummary.textContent = movie.summary.substring(0, 300);
-  elMovieModalLink.href = `https://www.youtube-nocookie.com/embed/${movie.ytid}`;
+  elMovieModalLink.href = movie.imdb_link;
 }
+
+// console.log(movies);
+// let newArray = movies.map((movie) => {
+//   return {
+//     title: movie.Title,
+//     full_title: movie.fulltitle,
+//     movie_year: movie.movie_year,
+//     categories: movie.Categories.split("|"),
+//     summary: movie.summary,
+//     image_url: `http://i3.ytimg.com/vi/${movie.ytid}/mqdefault.jpg`,
+//     imdb_id: movie.imdb_id,
+//     imdb_rating: movie.imdb_rating,
+//     runtime: movie.runtime,
+//     language: movie.language,
+//     youtube_id: movie.ytid,
+//     imdb_link: `https://www.imdb.com/title/${movie.imdb_id}/`,
+//     movie_frame: `https://www.youtube-nocookie.com/embed/${movie.ytid}`,
+//   };
+// });
